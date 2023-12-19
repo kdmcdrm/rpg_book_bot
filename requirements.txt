@@ -5,3 +5,4 @@ chromadb
 pypdf
 tiktoken
 faiss-cpu
+streamlit
