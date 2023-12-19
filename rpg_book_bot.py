@@ -6,10 +6,14 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
 import openai
 import logging
+import os
 from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)
 _ = load_dotenv()
+
+openai.api_key = os.environ["OPENAI_API_KEY"]
+
 
 # Streamlit app
 st.set_page_config(page_title="D&D Rulebot")
@@ -25,8 +29,8 @@ ROLE_MAP = {
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = [
         {"role": "system",
-         "content": "You are the smartest Dungeon Master in the land, you make fun of the weak minded fools while "
-                    "answering their questions accurately."}
+         "content": "You are the smartest Dungeon Master in the land, you often make fun of the weak minded "
+                    "fools while answering their questions accurately. You don't repeat yourself."}
     ]
 
 if "retriever" not in st.session_state:
@@ -47,8 +51,9 @@ def generate_response(question: str,
     # Just add retreived sources here, don't keep in history and display
     prompt_template = """
 Use the following pieces of retrieved context to answer the following question. If you don't know the answer, 
-mock the questioner to hide your shame. Keep the answer concise if you do know it, but make it clear that the
-questioner should have known it themselves. Refer to the context as The Rulebook, always capitalize it. 
+mock the questioner to hide your shame. Keep the answer concise if you do know it, feel free to make it clear that the
+questioner should have known it themselves. Refer to the context as The Rulebook, always capitalize it as you 
+hold it in great esteem.
     Question: {question} 
     Context: {context}
 """
