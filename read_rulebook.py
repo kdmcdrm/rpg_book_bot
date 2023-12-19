@@ -15,7 +15,6 @@ _ = load_dotenv()
 
 
 def read_rulebook(book_dir):
-    # ToDo: Load multiple books
     logger.info("---  Read Rulebook --- ")
     logger.info(f"Loading PDFs from {str(book_dir)}")
     loader = PyPDFDirectoryLoader(book_dir)
