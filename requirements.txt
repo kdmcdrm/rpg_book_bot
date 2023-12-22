@@ -1,6 +1,6 @@
 python-dotenv
 langchain
-openai==0.28
+openai
 chromadb
 pypdf
 tiktoken
