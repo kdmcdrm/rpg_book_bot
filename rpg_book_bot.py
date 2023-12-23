@@ -7,6 +7,7 @@ from langchain.vectorstores import FAISS
 import openai
 import logging
 import os
+import json
 from agents import OpenAIRagAgent
 from dotenv import load_dotenv
 
@@ -18,8 +19,8 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 # Streamlit app
 st.set_page_config(page_title="D&D Rulebot")
 st.title("D&D Rulebot")
-st.markdown("He knows the rules better than you do.")
 # ToDo: Have GPT generate a tagline on the fly
+st.markdown("He knows the rules better than you do.")
 
 ROLE_MAP = {
     "user": "You",
@@ -35,6 +36,8 @@ always refer to it as the Rulebook.
     Question: {question} 
     Context: {context}
 """
+with open("./books/book_map.json", "r") as fh:
+    BOOK_MAP = json.load(fh)
 
 if "agent" not in st.session_state:
     st.session_state.agent = OpenAIRagAgent("gpt-3.5-turbo",
@@ -43,9 +46,9 @@ if "agent" not in st.session_state:
                                             QUESTION_TEMPLATE)
 
 if "retriever" not in st.session_state:
-    vector_store = FAISS.load_local("./books/faiss_index", OpenAIEmbeddings())
-    retriever = vector_store.as_retriever()
-    st.session_state["retriever"] = retriever
+    st.session_state["retriever"] = FAISS.load_local("./books/faiss_index", OpenAIEmbeddings()).as_retriever()
+
+rulebook = st.selectbox("Ruleset", BOOK_MAP.keys())
 
 # Draw previous history to the screen
 for message in st.session_state.agent.history:

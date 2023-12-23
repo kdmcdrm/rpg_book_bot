@@ -1,5 +1,10 @@
 {
-  "D&D 5e": "./DnD_BasicRules_2018.pdf",
-  "OSE": "./Old-School_Essentials_-_Basic_Rules_v1-4.pdf"
-
+  "D&D 5e": {
+    "raw_filename": "DnD_BasicRules_2018.pdf",
+    "index_dir":  "dnd_5e_faiss_index"
+  },
+  "OSE": {
+    "raw_filename": "./Old-School_Essentials_-_Basic_Rules_v1-4.pdf",
+    "index_dir":  "ose_faiss_index"
+  }
 }

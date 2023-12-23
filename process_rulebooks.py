@@ -22,8 +22,8 @@ def process_rulebooks():
     logger.info("---  Read Rulebook --- ")
     with open("./books/book_map.json", "r") as fh:
         books = json.load(fh)
-    for name, path in books.items():
-        rel_path = Path("./books") / path
+    for name, paths in books.items():
+        rel_path = Path("./books") / paths["raw_filename"]
         logger.info(f"Loading rulebook from {str(rel_path)}")
         loader = PyPDFLoader(str(rel_path))
         docs = loader.load()
@@ -33,7 +33,7 @@ def process_rulebooks():
 
         logger.info("Creating vector store")
         vector_store = FAISS.from_documents(splits, OpenAIEmbeddings())
-        out_path = Path("./books") /  f"{name}_faiss_index"
+        out_path = Path("./books") / paths["index_dir"]
         logger.info(f"Saving vectorstore to {out_path}")
         vector_store.save_local(out_path)
 
