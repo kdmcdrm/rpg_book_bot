@@ -1,6 +1,11 @@
 """
 Simple AI RPG Book Rulebot
+
+ToDo:
+ - Tweak RAG lookup. Not getting all character classes nor encounter distance for OSE - can improve table handling?
 """
+from pathlib import Path
+
 import streamlit as st
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
@@ -17,10 +22,10 @@ _ = load_dotenv()
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
 # Streamlit app
-st.set_page_config(page_title="D&D Rulebot")
-st.title("D&D Rulebot")
+st.set_page_config(page_title="Snarky D&D Rulebot")
+st.title("Snarky D&D Rulebot")
 # ToDo: Have GPT generate a tagline on the fly
-st.markdown("He knows the rules better than you do.")
+st.markdown("He knows the rules better than you do. (At least he thinks he does)")
 
 ROLE_MAP = {
     "user": "You",
@@ -28,11 +33,11 @@ ROLE_MAP = {
 }
 SYS_MSG = (
     "You are the smartest Dungeon Master in the land, you often make fun of the weak minded fools while answering"
-    " their questions accurately")
+    " their questions accurately.")
 
 QUESTION_TEMPLATE = """Use the following pieces of the Rulebook to answer the question below. 
-Keep the answer concise know the answer, dismiss the question as pointless if you don't. If you refer to the Rulebook
-always refer to it as the Rulebook.
+Keep the answer concise know the answer, dismiss the question as pointless if you don't. Feel free to mention how
+simple the question is, or otherwise indicate that is exhausting for you to deal with such trivial questions
     Question: {question} 
     Context: {context}
 """
@@ -45,11 +50,22 @@ if "agent" not in st.session_state:
                                             SYS_MSG,
                                             QUESTION_TEMPLATE)
 
+
+def set_retriever():
+    """
+    Sets the rule book retriever in the session state
+    """
+    index_path = Path("./books") / BOOK_MAP[st.session_state["rulebook"]]["index_dir"]
+    st.session_state["retriever"] = FAISS.load_local(index_path, OpenAIEmbeddings()).as_retriever()
+
+
+st.session_state["rulebook"] = st.selectbox("Ruleset", BOOK_MAP.keys(), index=0, on_change=set_retriever)
+
+# Sets the initial rulebook
 if "retriever" not in st.session_state:
-    st.session_state["retriever"] = FAISS.load_local("./books/faiss_index", OpenAIEmbeddings()).as_retriever()
+    set_retriever()
 
-rulebook = st.selectbox("Ruleset", BOOK_MAP.keys())
-
+st.divider()
 # Draw previous history to the screen
 for message in st.session_state.agent.history:
     if message["role"] == "system":
