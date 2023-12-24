@@ -1,9 +1,9 @@
 {
-  "D&D 5e": {
+  "D&D 5e Basic Rules": {
     "raw_filename": "DnD_BasicRules_2018.pdf",
     "index_dir":  "dnd_5e_faiss_index"
   },
-  "OSE": {
+  "OSE Basic Rules": {
     "raw_filename": "./Old-School_Essentials_-_Basic_Rules_v1-4.pdf",
     "index_dir":  "ose_faiss_index"
   }

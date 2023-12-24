@@ -2,7 +2,10 @@
 Simple AI RPG Book Rulebot
 
 ToDo:
- - Tweak RAG lookup. Not getting all character classes nor encounter distance for OSE - can improve table handling?
+ - Move MODEL_NAME definition to environment
+ - Add page number handling
+ - Add ability to have multiple books for single ruleset (OSE + carcass crawlers)
+ - Modify to Discord bot
 """
 from pathlib import Path
 
@@ -25,7 +28,7 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 st.set_page_config(page_title="Snarky D&D Rulebot")
 st.title("Snarky D&D Rulebot")
 # ToDo: Have GPT generate a tagline on the fly
-st.markdown("He knows the rules better than you do. (At least he thinks he does)")
+st.markdown("Ask me your specific rules questions and be amazed with my answers.")
 
 ROLE_MAP = {
     "user": "You",
@@ -36,8 +39,9 @@ SYS_MSG = (
     " their questions accurately.")
 
 QUESTION_TEMPLATE = """Use the following pieces of the Rulebook to answer the question below. 
-Keep the answer concise know the answer, dismiss the question as pointless if you don't. Feel free to mention how
-simple the question is, or otherwise indicate that is exhausting for you to deal with such trivial questions
+Keep the answer concise know the answer, dismiss the question as pointless if you don't. Feel free to demean the
+asker for asking such simple questions that everyone should already know the answers to. Do not use the same insults
+each time you answer a question.
     Question: {question} 
     Context: {context}
 """
@@ -51,19 +55,22 @@ if "agent" not in st.session_state:
                                             QUESTION_TEMPLATE)
 
 
-def set_retriever():
-    """
-    Sets the rule book retriever in the session state
-    """
-    index_path = Path("./books") / BOOK_MAP[st.session_state["rulebook"]]["index_dir"]
-    st.session_state["retriever"] = FAISS.load_local(index_path, OpenAIEmbeddings()).as_retriever()
+rulebook_name = st.selectbox("Select Ruleset",
+                             BOOK_MAP.keys(),
+                             index=0)
 
-
-st.session_state["rulebook"] = st.selectbox("Ruleset", BOOK_MAP.keys(), index=0, on_change=set_retriever)
 
 # Sets the initial rulebook
-if "retriever" not in st.session_state:
-    set_retriever()
+if "rulebook" not in st.session_state:
+    st.session_state["rulebook_name"] = rulebook_name
+    index_path = Path("./books") / BOOK_MAP[rulebook_name]["index_dir"]
+    st.session_state["rulebook"] = FAISS.load_local(index_path, OpenAIEmbeddings()).as_retriever(k=1)
+
+if st.session_state["rulebook"] != rulebook_name:
+    st.session_state["rulebook_name"] = rulebook_name
+    index_path = Path("./books") / BOOK_MAP[rulebook_name]["index_dir"]
+    st.session_state["rulebook"] = FAISS.load_local(index_path, OpenAIEmbeddings()).as_retriever(k=1)
+
 
 st.divider()
 # Draw previous history to the screen
@@ -80,7 +87,7 @@ if user_input := st.chat_input("Ask if you must..."):
 
     # Use Agent to generate response
     # ToDo: Add page number here
-    context = [x.page_content for x in st.session_state.retriever.get_relevant_documents(user_input)]
+    context = [x.page_content for x in st.session_state["rulebook"].get_relevant_documents(user_input)]
     response = st.session_state.agent(user_input, context)
 
     with st.chat_message(ROLE_MAP["assistant"]):
