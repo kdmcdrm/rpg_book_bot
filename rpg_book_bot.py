@@ -28,7 +28,8 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 # Streamlit app
 st.set_page_config(page_title="Rules Master 9000")
 st.title("Rules Master 9000")
-st.markdown("I am the Rules Master 9000. Ask me your D&D rules questions and bask in my knowledge.")
+st.markdown(
+    "I am the Rules Master 9000. Ask me your D&D rules questions and bask in my superior knowledge feeble human.")
 
 # ToDo: These should be in the session state
 ROLE_MAP = {
