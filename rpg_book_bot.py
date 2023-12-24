@@ -2,10 +2,11 @@
 Simple AI RPG Book Rulebot
 
 ToDo:
- - Move MODEL_NAME definition to environment
  - Add page number handling
  - Add ability to have multiple books for single ruleset (OSE + carcass crawlers)
  - Modify to Discord bot
+ - Improvement: Get LLM to process question to include any needed context from previous conversation, currently only
+    the immediate question goes to the bot.
 """
 from pathlib import Path
 
@@ -32,7 +33,7 @@ st.markdown("I am the Rules Master 9000. Ask me your D&D rules questions and bas
 # ToDo: These should be in the session state
 ROLE_MAP = {
     "user": "You",
-    "assistant": "DM"
+    "assistant": "RM9000"
 }
 SYS_MSG = (
     "You are the smartest Dungeon Master in the land, you often make fun of the weak minded fools while answering"
@@ -49,7 +50,7 @@ with open("./books/book_map.json", "r") as fh:
     BOOK_MAP = json.load(fh)
 
 if "agent" not in st.session_state:
-    st.session_state.agent = OpenAIRagAgent("gpt-3.5-turbo",
+    st.session_state.agent = OpenAIRagAgent(os.environ["OPENAI_MODEL_NAME"],
                                             os.environ["OPENAI_API_KEY"],
                                             SYS_MSG,
                                             QUESTION_TEMPLATE)
