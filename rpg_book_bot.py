@@ -25,9 +25,9 @@ _ = load_dotenv()
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
 # Streamlit app
-st.set_page_config(page_title="Snarky D&D Rulebot")
-st.title("Snarky D&D Rulebot")
-st.markdown("Ask me your specific rules questions and be amazed with my answers.")
+st.set_page_config(page_title="Rules Master 9000")
+st.title("Rules Master 9000")
+st.markdown("I am the Rules Master 9000. Ask me your D&D rules questions and bask in my knowledge.")
 
 # ToDo: These should be in the session state
 ROLE_MAP = {
@@ -55,9 +55,12 @@ if "agent" not in st.session_state:
                                             QUESTION_TEMPLATE)
 
 
-rulebook_name = st.selectbox("Select Ruleset",
-                             BOOK_MAP.keys(),
-                             index=0)
+with st.sidebar:
+    st.markdown("# Configuration")
+    rulebook_name = st.selectbox("Select Ruleset",
+                                 BOOK_MAP.keys(),
+                                 index=0)
+    st.selectbox("Select Personality", options=["Arrogant"], disabled=True)
 
 
 # Sets the initial rulebook
@@ -72,7 +75,6 @@ if st.session_state["rulebook_name"] != rulebook_name:
     st.session_state["rulebook_name"] = rulebook_name
 
 
-st.divider()
 # Draw previous history to the screen
 for message in st.session_state.agent.history:
     if message["role"] == "system":
