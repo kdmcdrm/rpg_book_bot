@@ -27,9 +27,9 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 # Streamlit app
 st.set_page_config(page_title="Snarky D&D Rulebot")
 st.title("Snarky D&D Rulebot")
-# ToDo: Have GPT generate a tagline on the fly
 st.markdown("Ask me your specific rules questions and be amazed with my answers.")
 
+# ToDo: These should be in the session state
 ROLE_MAP = {
     "user": "You",
     "assistant": "DM"
@@ -62,14 +62,14 @@ rulebook_name = st.selectbox("Select Ruleset",
 
 # Sets the initial rulebook
 if "rulebook" not in st.session_state:
-    st.session_state["rulebook_name"] = rulebook_name
     index_path = Path("./books") / BOOK_MAP[rulebook_name]["index_dir"]
     st.session_state["rulebook"] = FAISS.load_local(index_path, OpenAIEmbeddings()).as_retriever(k=1)
+    st.session_state["rulebook_name"] = rulebook_name
 
-if st.session_state["rulebook"] != rulebook_name:
-    st.session_state["rulebook_name"] = rulebook_name
+if st.session_state["rulebook_name"] != rulebook_name:
     index_path = Path("./books") / BOOK_MAP[rulebook_name]["index_dir"]
     st.session_state["rulebook"] = FAISS.load_local(index_path, OpenAIEmbeddings()).as_retriever(k=1)
+    st.session_state["rulebook_name"] = rulebook_name
 
 
 st.divider()
