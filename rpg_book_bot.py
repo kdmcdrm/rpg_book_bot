@@ -2,7 +2,7 @@
 Simple AI RPG Book Rulebot
 
 ToDo:
- - Add page number handling
+ - ** Update book map handling to support multiple pdfs for a single ruleset and new format**
  - Add ability to have multiple books for single ruleset (OSE + carcass crawlers) - Library class + Additional details in book_map
  - Modify to Discord bot
  - Improvement: Get LLM to process question to include any needed context from previous conversation, currently only

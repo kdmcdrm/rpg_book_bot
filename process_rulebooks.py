@@ -1,14 +1,13 @@
 
+import logging
+from pathlib import Path
+
+import yaml
 from dotenv import load_dotenv
 from langchain.document_loaders import PyPDFLoader
-import json
+from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import FAISS
-from langchain.embeddings.openai import OpenAIEmbeddings
-from pathlib import Path
-import logging
-import yaml
-
 
 logger = logging.getLogger(__name__)
 _ = load_dotenv()
@@ -18,13 +17,20 @@ def process_rulebooks():
     """
     Processes a rulebook to create a vector store for Retrieval
     Augmented Generation.
+    Requires a ./books subdirectory with a "book_map.yaml" config file. Will
+    write the indexes to the ./books directory as well.
     """
     logger.info("---  Process Rulebooks --- ")
     with open("./books/book_map.yaml", "r") as fh:
         rulesets = yaml.safe_load(fh)
 
     for ruleset, ruleset_rec in rulesets.items():
-        logger.info(f"Starting ruleset {ruleset}")
+        index_path = Path("./books") / ruleset_rec["index_dir"]
+        if index_path.exists():
+            logger.warning(f"Skipping ruleset {ruleset}, index found at {ruleset_rec['index_dir']}")
+            continue
+        else:
+            logger.info(f"Starting ruleset {ruleset}")
         docs = []
         for book in ruleset_rec["books"]:
             rel_path = Path("./books") / book["filename"]
@@ -37,9 +43,8 @@ def process_rulebooks():
 
         logger.info("Creating vector store")
         vector_store = FAISS.from_documents(splits, OpenAIEmbeddings())
-        out_path = Path("./books") / ruleset_rec["index_dir"]
-        logger.info(f"Saving vectorstore to {out_path}")
-        vector_store.save_local(out_path)
+        logger.info(f"Saving vectorstore to {index_path}")
+        vector_store.save_local(index_path)
 
 
 if __name__ == "__main__":
