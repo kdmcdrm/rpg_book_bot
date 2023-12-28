@@ -78,7 +78,6 @@ if user_input := st.chat_input("Ask if you must..."):
 
     # Use Agent to generate response
     response = st.session_state.agent(user_input, context)
-    response_varied = st.session_state.agent.vary_last_message()
 
     with st.chat_message(ROLE_MAP["assistant"]):
-        st.markdown(response_varied)
+        st.markdown(response)

@@ -6,9 +6,9 @@ class RagAgent(ABC):
     """
     Base LLM Agent Abstract Class
     """
+
     @abstractmethod
     def __call__(self, question: str, context: list[str]) -> str:
-
         """
         Calls the agent
 
@@ -54,7 +54,9 @@ class OpenAIRagAgent(RagAgent):
     def _format_agent_message(content: str) -> dict[str, str]:
         return {"role": "assistant", "content": content}
 
-    def __call__(self, question: str, context_docs: list[str]) -> str:
+    def __call__(self, question: str,
+                 context_docs: list[str],
+                 tweak_response: bool = True) -> str:
         """
         Call the LLM agent with a specific question and context.
 
@@ -72,40 +74,41 @@ class OpenAIRagAgent(RagAgent):
             messages=self.history + [quest_msg],
             temperature=0.2
         ).choices[0].message.content.strip()
+        if tweak_response:
+            res = self._tweak_response_repetition(res)
 
-        # Add question (without contexT) and answer to the history
+        # Add question (without context) and answer to the history
         self.history.append(self._format_user_message(question))
         self.history.append(self._format_agent_message(res))
 
         return res
 
-    def vary_last_message(self) -> str:
+    def _tweak_response_repetition(self, response) -> str:
         """
-        Varies the last LLM response if the LLM is being repetitive
+        Varies the last LLM response if the LLM is being repetitive (which it tends to be).
+        Args:
+            response: The response to vary.
         """
         template = \
-        """
-        Given the following LLM Response and LLM Conversation History, modify the response 
-        while maintaining its factual content and general tone if the structure of the
-        message is repetitive, given the history. Respond with only the new, more original,
-        response.
+            """
+        Given the following LLM Response and previous response History, determine if the response is 
+        following a repetitive structure. If it is, reword it to vary the structure while maintaining the facts and the 
+        general tone of the message. Respond with only the new, more original, response.
         
         Response: {response}
         History: {history}
         
         New Response:
         """
-        # ToDo: Add this to the call above
         history = ""
-        for msg in self.history[-5:-1]:
-            history += f"{msg['role']}: {msg['content']}"
+        for msg in self.history[-5:]:
+            if msg["role"] == "assistant":
+                history += f"{msg['role']}: {msg['content']}\n"
 
-        req = self._format_user_message(template.format(response=self.history[-1]["content"], history=history))
+        req = self._format_user_message(template.format(response=response, history=history))
         res = self.client.chat.completions.create(
             model=self.model_name,
-            messages = [self.sys_message] + [req],
+            messages=[self.sys_message] + [req],
             temperature=0.0
         ).choices[0].message.content.strip()
-        # Replace the last history message with the latest one
-        self.history[-1] = self._format_agent_message(res)
         return res
