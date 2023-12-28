@@ -6,6 +6,7 @@ ToDo:
  - Improvement: Get LLM to process question to include any needed context from previous conversation, currently only
     the immediate question goes to the bot.
  - Improvement: Do LLM Response post processing to avoid repetition
+ - Improvement: Model selection
 """
 
 import streamlit as st
