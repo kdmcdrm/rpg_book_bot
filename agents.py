@@ -78,3 +78,34 @@ class OpenAIRagAgent(RagAgent):
         self.history.append(self._format_agent_message(res))
 
         return res
+
+    def vary_last_message(self) -> str:
+        """
+        Varies the last LLM response if the LLM is being repetitive
+        """
+        template = \
+        """
+        Given the following LLM Response and LLM Conversation History, modify the response 
+        while maintaining its factual content and general tone if the structure of the
+        message is repetitive, given the history. Respond with only the new, more original,
+        response.
+        
+        Response: {response}
+        History: {history}
+        
+        New Response:
+        """
+        # ToDo: Add this to the call above
+        history = ""
+        for msg in self.history[-5:-1]:
+            history += f"{msg['role']}: {msg['content']}"
+
+        req = self._format_user_message(template.format(response=self.history[-1]["content"], history=history))
+        res = self.client.chat.completions.create(
+            model=self.model_name,
+            messages = [self.sys_message] + [req],
+            temperature=0.0
+        ).choices[0].message.content.strip()
+        # Replace the last history message with the latest one
+        self.history[-1] = self._format_agent_message(res)
+        return res

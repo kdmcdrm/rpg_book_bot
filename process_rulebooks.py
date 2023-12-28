@@ -27,14 +27,14 @@ def process_rulebooks():
     for ruleset, ruleset_rec in rulesets.items():
         index_path = Path("./books") / ruleset_rec["index_dir"]
         if index_path.exists():
-            logger.warning(f"Skipping ruleset {ruleset}, index found at {ruleset_rec['index_dir']}")
+            logger.info(f"Skipping ruleset {ruleset}, index found at {ruleset_rec['index_dir']}")
             continue
         else:
             logger.info(f"Starting ruleset {ruleset}")
         docs = []
-        for book in ruleset_rec["books"]:
-            rel_path = Path("./books") / book["filename"]
-            logger.info(f"Loading book {book['title']} from {str(rel_path)}")
+        for book_path, book_rec in ruleset_rec["books"].items():
+            rel_path = Path("./books") / book_path
+            logger.info(f"Loading book {book_rec['title']} from {str(rel_path)}")
             loader = PyPDFLoader(str(rel_path))
             docs += loader.load()
 

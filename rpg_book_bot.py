@@ -2,11 +2,10 @@
 RPG Rulebook Bot
 
 ToDo:
- - ** Update book map handling to support multiple pdfs for a single ruleset and new format**
- - Add ability to have multiple books for single ruleset (OSE + carcass crawlers) - Library class + Additional details in book_map
  - Modify to Discord bot
  - Improvement: Get LLM to process question to include any needed context from previous conversation, currently only
     the immediate question goes to the bot.
+ - Improvement: Do LLM Response post processing to avoid repetition
 """
 
 import streamlit as st
@@ -39,8 +38,7 @@ SYS_MSG = (
 
 QUESTION_TEMPLATE = """Use the following pairs of page number and Rulebook passage to answer the question below. 
 Provide the page number and keep the answer concise if you know the answer, dismiss the question as pointless if you 
-don't. Feel free to demean the asker for asking such simple questions that everyone should already know the answers 
-to. Do not use the same insults each time you answer a question. Question: {question} Context: {context}"""
+don't. Do not use the same insults each time you answer a question. Question: {question} Context: {context}"""
 
 # Load all rulesets
 if "rulesets" not in st.session_state:
@@ -79,6 +77,7 @@ if user_input := st.chat_input("Ask if you must..."):
 
     # Use Agent to generate response
     response = st.session_state.agent(user_input, context)
+    response_varied = st.session_state.agent.vary_last_message()
 
     with st.chat_message(ROLE_MAP["assistant"]):
-        st.markdown(response)
+        st.markdown(response_varied)
