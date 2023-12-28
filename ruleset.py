@@ -23,10 +23,17 @@ class Ruleset:
         """
         Gets the relevant context for a question.
         """
-        # ToDo: Overwrite title and apply page offset
-        context = [f'pg {doc.metadata["page"]}: {doc.page_content}'
-                   for doc in self.ret.get_relevant_documents(question)]
-        return context
+        doc_template = "{book} pg {pg}: {context}"
+        context = []
+        # Overwrite the title and applies page offset to match page numbers
+        for doc in self.ret.get_relevant_documents(question):
+            path = Path(doc.metadata["source"])
+            context.append(doc_template.format(
+                book= self.book_recs[path.name]["title"],
+                pg=str(doc.metadata["page"] - self.book_recs[path.name]["page_offset"]),
+                context=doc.page_content)
+            )
+        return "\n".join(context)
 
 
 def load_rulesets(config_path: str) -> dict[str, Ruleset]:
