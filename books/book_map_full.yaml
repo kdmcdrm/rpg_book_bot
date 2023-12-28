@@ -1,0 +1,29 @@
+One D&D Basic Rules:
+  index_dir: dnd_5e_basic_index
+  books:
+    DnD_BasicRules_2018.pdf:
+      title: Basic Rules
+      page_offset: 2
+
+OSE Basic Rules:
+  index_dir: ose_basic_index
+  books:
+    Old-School_Essentials_-_Basic_Rules_v1-4.pdf:
+      title: Basic Rules
+      page_offset: 2
+
+D&D 5e:
+  index_dir: dnd_5e_index
+  books:
+    D&D 5E - Dungeon Master's Guide.pdf:
+      title: Dungeon Master's Guide
+      page_offset: 0
+    D&D 5E - Monster Manual.pdf:
+      title: Monster Manual
+      page_offset: 0
+    D&D 5E - Player's Handbook.pdf:
+      title: Player's Handbook
+      page_offset: 0
+    D&D 5E - Xanathar's Guide to Everything.pdf:
+      title: Xanathar's
+      page_offset: 0

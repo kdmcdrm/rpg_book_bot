@@ -3,7 +3,7 @@ One D&D Basic Rules:
   books:
     DnD_BasicRules_2018.pdf:
       title: Basic Rules
-      page_offset: 2
+      page_offset: 0
 
 OSE Basic Rules:
   index_dir: ose_basic_index

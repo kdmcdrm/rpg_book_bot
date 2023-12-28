@@ -72,7 +72,7 @@ class OpenAIRagAgent(RagAgent):
         res = self.client.chat.completions.create(
             model=self.model_name,
             messages=self.history + [quest_msg],
-            temperature=0.2
+            temperature=0.3
         ).choices[0].message.content.strip()
         if tweak_response:
             res = self._tweak_response_repetition(res)
