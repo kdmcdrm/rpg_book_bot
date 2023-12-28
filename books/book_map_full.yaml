@@ -27,3 +27,22 @@ D&D 5e:
     D&D 5E - Xanathar's Guide to Everything.pdf:
       title: Xanathar's
       page_offset: 0
+
+OSE:
+  index_dir: ose_index
+  books:
+    ose_rules.pdf:
+      title: Basic Fantasy
+      page_offset: 2
+    ose_advanced_fantasy.pdf:
+      title: Advanced Fantasy
+      page_offset: 2
+    carcasscrawler_issue1.pdf:
+      title: Carcass Crawler 1
+      page_offset: 2
+    carcasscrawler_issue2.pdf:
+      title: Carcass Crawler 2
+      page_offset: 2
+    carcasscrawler_issue3.pdf:
+      title: Carcass Crawler 3
+      page_offset: 2
