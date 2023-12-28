@@ -34,7 +34,7 @@ def process_rulebooks():
         docs = []
         for book in ruleset_rec["books"]:
             rel_path = Path("./books") / book["filename"]
-            logger.info(f"Loading book {book['book_name']} from {str(rel_path)}")
+            logger.info(f"Loading book {book['title']} from {str(rel_path)}")
             loader = PyPDFLoader(str(rel_path))
             docs += loader.load()
 
