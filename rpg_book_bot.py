@@ -2,10 +2,11 @@
 RPG Rulebook Bot
 
 ToDo:
- - Modify to Discord bot
+ - Pick book map based on environment file
  - Improvement: Get LLM to process question to include any needed context from previous conversation, currently only
     the immediate question goes to the bot.
  - Improvement: Model selection
+ - Modify to Discord bot
 """
 
 import streamlit as st

@@ -1,3 +1,5 @@
+import re
+
 from langchain.vectorstores import FAISS
 from langchain.embeddings import OpenAIEmbeddings
 import yaml
@@ -27,7 +29,8 @@ class Ruleset:
         context = []
         # Overwrite the title and applies page offset to match page numbers
         for doc in self.ret.get_relevant_documents(question):
-            path = Path(doc.metadata["source"])
+            # Pathlib would not handle the Windows paths here, do a replacement
+            path = Path(doc.metadata["source"].replace("\\", "/"))
             context.append(doc_template.format(
                 book= self.book_recs[path.name]["title"],
                 pg=str(doc.metadata["page"] - self.book_recs[path.name]["page_offset"]),
