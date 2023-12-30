@@ -12,10 +12,9 @@ import streamlit as st
 import openai
 import logging
 import os
-import json
 from agents import OpenAIRagAgent
 from dotenv import load_dotenv
-from ruleset import load_rulesets, Ruleset
+from ruleset import load_rulesets
 
 logger = logging.getLogger(__name__)
 _ = load_dotenv()
@@ -76,7 +75,17 @@ if user_input := st.chat_input("Ask if you must..."):
     context = st.session_state["rulesets"][ruleset_name].get_context(user_input)
 
     # Use Agent to generate response
-    response = st.session_state.agent(user_input, context)
-
     with st.chat_message(ROLE_MAP["assistant"]):
-        st.markdown(response)
+        placeholder = st.empty()
+        full_res = ""
+        # Stream output, based on ChatGPT
+        completion = st.session_state.agent(user_input, context)
+        for chunk in completion:
+            full_res += (chunk.choices[0].delta.content or "")
+            placeholder.markdown(full_res + "▌")
+        placeholder.markdown(full_res)
+
+    # Add question and answer to agent history
+    agent = st.session_state.agent
+    agent.history.append(agent.format_user_message(user_input))
+    agent.history.append(agent.format_agent_message(full_res))

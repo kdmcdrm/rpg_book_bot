@@ -1,4 +1,6 @@
 import openai
+from openai import Stream
+from openai.types.chat.chat_completion_chunk import ChatCompletionChunk
 from abc import ABC, abstractmethod
 
 
@@ -47,41 +49,34 @@ class OpenAIRagAgent(RagAgent):
         self.question_template = question_template
 
     @staticmethod
-    def _format_user_message(content: str) -> dict[str, str]:
+    def format_user_message(content: str) -> dict[str, str]:
         return {"role": "user", "content": content}
 
     @staticmethod
-    def _format_agent_message(content: str) -> dict[str, str]:
+    def format_agent_message(content: str) -> dict[str, str]:
         return {"role": "assistant", "content": content}
 
-    def __call__(self, question: str,
-                 context_docs: list[str],
-                 tweak_response: bool = True) -> str:
+    def __call__(self,
+                 question: str,
+                 context: str) -> Stream[ChatCompletionChunk]:
         """
         Call the LLM agent with a specific question and context.
 
         Args:
             question: The question asked
-            context_docs: The context documents
+            context: The context string
 
         Returns:
             response: The agent's response
         """
-        quest_msg = self._format_user_message(self.question_template.format(question=question,
-                                                                            context="\n".join(context_docs)))
-        res = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=self.history + [quest_msg],
-            temperature=0.3
-        ).choices[0].message.content.strip()
-        if tweak_response:
-            res = self._tweak_response_repetition(res)
-
-        # Add question (without context) and answer to the history
-        self.history.append(self._format_user_message(question))
-        self.history.append(self._format_agent_message(res))
-
-        return res
+        quest_msg = self.format_user_message(self.question_template.format(question=question,
+                                                                           context=context))
+        return self.client.chat.completions.create(
+                model=self.model_name,
+                messages=self.history + [quest_msg],
+                temperature=0.3,
+                stream=True
+        )
 
     def _tweak_response_repetition(self, response) -> str:
         """
@@ -105,7 +100,7 @@ class OpenAIRagAgent(RagAgent):
             if msg["role"] == "assistant":
                 history += f"{msg['role']}: {msg['content']}\n"
 
-        req = self._format_user_message(template.format(response=response, history=history))
+        req = self.format_user_message(template.format(response=response, history=history))
         res = self.client.chat.completions.create(
             model=self.model_name,
             messages=[self.sys_message] + [req],
