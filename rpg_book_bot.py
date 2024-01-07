@@ -59,6 +59,8 @@ with st.sidebar:
     st.selectbox("Select Personality",
                  options=["Arrogant", "Mean-Spirited", "Smarter Than You", "This doesn't do anything lol"])
 
+    st.markdown("<small>To donate to server costs [click here](https://ko-fi.com/kevinmac)</small>", unsafe_allow_html=True)
+
 
 # Draw previous history to the screen
 for message in st.session_state.agent.history:
