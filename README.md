@@ -1,6 +1,12 @@
-# RPG Rules Bot
-This is a simple tool to look up game rules using a vector store and provide
-them with a snarky interface.
+# Rules Master 9000
+Have you ever forgotten a RPG rule and the Googled it, but you wished that Google would be mean to you?
+I built this package to solve that problem (for some reason).
+
+It uses Retrieval Augmented Generation, first searching for the most relevant sections of the rulebook
+and then providing those to the LLM to provide the final rules answer. Here's an example:
+
+![](\docs\example1.png)
+
 
 ## Installation
 1. Install requirements `pip install -r requirements.txt`. Likely want to use an environment.
