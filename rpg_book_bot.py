@@ -44,7 +44,6 @@ don't. Do not use the same insults each time you answer a question. Question: {q
 if "rulesets" not in st.session_state:
     st.session_state["rulesets"] = load_rulesets("./books/book_map.yaml")
 
-
 if "agent" not in st.session_state:
     st.session_state.agent = OpenAIRagAgent(os.environ["OPENAI_MODEL_NAME"],
                                             os.environ["OPENAI_API_KEY"],
@@ -52,14 +51,23 @@ if "agent" not in st.session_state:
                                             QUESTION_TEMPLATE)
 
 with st.sidebar:
+    st.markdown("# About")
+    st.markdown(""" 
+    <small> The Rules Master is using OpenAI GPT-4 and retrieval augmented search. It finds the most relevant sections
+    of the rulebook, and passes to GPT-4 as context. This makes the model less likely to hallucinate,
+    but it means that the Rules Master is much better at specific rules ("What is dashing?") versus general ones
+    ("How many classes are there?"). </small>
+    """, unsafe_allow_html=True)
+    st.markdown("---")
     st.markdown("# Configuration")
     ruleset_name = st.selectbox("Select Ruleset",
                                 st.session_state["rulesets"].keys(),
                                 index=0)
     st.selectbox("Select Personality",
                  options=["Arrogant", "Mean-Spirited", "Smarter Than You", "This doesn't do anything lol"])
-
-    st.markdown("<small>To donate to server costs [click here](https://ko-fi.com/kevinmac)</small>", unsafe_allow_html=True)
+    st.markdown("---")
+    st.markdown("<small>To donate to server costs [click here](https://ko-fi.com/kevinmac)</small>",
+                unsafe_allow_html=True)
 
 
 # Draw previous history to the screen
