@@ -13,4 +13,4 @@ and then providing those to the LLM to provide the final rules answer. Here's an
 2. Copy env_example to .env and fill in the required elements.
 3. Add the rulebook files to `./books` and update `./books/book_map.json` with name to filename mapping.
 4. Run `process_rulebooks.py` to create the vector stores.
-5. Run `rpg_book_bot.py` to bring up the interface.
+5. Run `streamlit rpg_book_bot.py` to bring up the interface. (Or run `python run_streamlit.py`)
