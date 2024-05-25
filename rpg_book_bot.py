@@ -27,7 +27,7 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 st.set_page_config(page_title="Rules Master 9000")
 st.title("Rules Master 9000")
 st.markdown(
-    "I am the Rules Master 9000. Ask me your D&D rules questions and bask in my superior knowledge.")
+    "I am the Rules Master 9000. Ask me your rules questions and bask in my superior knowledge.")
 
 ROLE_MAP = {
     "user": "You",
