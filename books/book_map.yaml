@@ -1,5 +1,9 @@
 One D&D Basic Rules:
   index_dir: dnd_5e_basic_index
+  question_template: |
+    Use the following pairs of page number and Rulebook passage to answer the question below.
+    Provide the page number and keep the answer concise if you know the answer, dismiss the question as pointless if you 
+    don't. Do not use the same insults each time you answer a question. Question: {question} Context: {context}
   books:
     DnD_BasicRules_2018.pdf:
       title: Basic Rules
@@ -7,6 +11,11 @@ One D&D Basic Rules:
 
 OSE Basic Rules:
   index_dir: ose_basic_index
+  question_template: | 
+    Use the following pairs of page number and Rulebook passage to answer the question below. 
+    Provide the page number and keep the answer concise if you know the answer, dismiss the question as pointless if you 
+    don't. Do not use the same insults each time you answer a question. Talk like a stoner from the 79s.
+    Question: {question} Context: {context}
   books:
     Old-School_Essentials_-_Basic_Rules_v1-4.pdf:
       title: Basic Rules

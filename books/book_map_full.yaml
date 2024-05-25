@@ -1,5 +1,9 @@
 One D&D Basic Rules:
   index_dir: dnd_5e_basic_index
+  question_template: |
+    Use the following pairs of page number and Rulebook passage to answer the question below.
+    Provide the page number and keep the answer concise if you know the answer, dismiss the question as pointless if you 
+    don't. Do not use the same insults each time you answer a question. Question: {question} Context: {context}
   books:
     DnD_BasicRules_2018.pdf:
       title: Basic Rules
@@ -7,6 +11,10 @@ One D&D Basic Rules:
 
 OSE Basic Rules:
   index_dir: ose_basic_index
+  question_template: |
+    Use the following pairs of page number and Rulebook passage to answer the question below.
+    Provide the page number and keep the answer concise if you know the answer, dismiss the question as pointless if you 
+    don't. Do not use the same insults each time you answer a question. Question: {question} Context: {context}
   books:
     Old-School_Essentials_-_Basic_Rules_v1-4.pdf:
       title: Basic Rules
@@ -14,6 +22,10 @@ OSE Basic Rules:
 
 D&D 5e:
   index_dir: dnd_5e_index
+  question_template: |
+    Use the following pairs of page number and Rulebook passage to answer the question below.
+    Provide the page number and keep the answer concise if you know the answer, dismiss the question as pointless if you 
+    don't. Do not use the same insults each time you answer a question. Question: {question} Context: {context}
   books:
     D&D 5E - Dungeon Master's Guide.pdf:
       title: Dungeon Master's Guide
@@ -30,6 +42,10 @@ D&D 5e:
 
 OSE:
   index_dir: ose_index
+  question_template: |
+    Use the following pairs of page number and Rulebook passage to answer the question below.
+    Provide the page number and keep the answer concise if you know the answer, dismiss the question as pointless if you 
+    don't. Do not use the same insults each time you answer a question. Question: {question} Context: {context}
   books:
     ose_rules.pdf:
       title: Basic Fantasy
@@ -46,3 +62,16 @@ OSE:
     carcasscrawler_issue3.pdf:
       title: Carcass Crawler 3
       page_offset: 2
+
+Blades in the Dark:
+  index_dir: bitd_index
+  question_template: |
+    Use the following pairs of page number and Rulebook passage to answer the question below.
+    Provide the page number and keep the answer concise if you know the answer, dismiss the question as pointless if you 
+    don't. Do not use the same insults each time you answer a question. Respond like a thug in a victorian steam
+    punk setting, like the characters from Thief the Dark Project or Dishonored.
+    Question: {question} Context: {context}
+  books:
+    bladesinthedark_v8_2.pdf:
+      title: Blades in the Dark Rulebook
+      page_offset: 9

@@ -2,7 +2,7 @@
 RPG Rulebook Bot
 
 ToDo:
- - Pick book map based on environment file
+ - Improvement: Modify system message and question template based on config
  - Improvement: Get LLM to process question to include any needed context from previous conversation, currently only
     the immediate question goes to the bot.
  - Improvement: Model selection
@@ -16,6 +16,7 @@ import os
 from agents import OpenAIRagAgent
 from dotenv import load_dotenv
 from ruleset import load_rulesets
+import yaml
 
 logger = logging.getLogger(__name__)
 _ = load_dotenv()
@@ -33,23 +34,29 @@ ROLE_MAP = {
     "assistant": "RM9000"
 }
 SYS_MSG = (
-    "You are the smartest Dungeon Master in the land, you often make fun of the weak minded fools while answering"
+    "You are the smartest Rules Master in the land, you often make fun of the weak minded fools while answering"
     " their questions accurately.")
 
-QUESTION_TEMPLATE = """Use the following pairs of page number and Rulebook passage to answer the question below. 
-Provide the page number and keep the answer concise if you know the answer, dismiss the question as pointless if you 
-don't. Do not use the same insults each time you answer a question. Question: {question} Context: {context}"""
 
 # Load all rulesets
 if "rulesets" not in st.session_state:
     st.session_state["rulesets"] = load_rulesets("./books/book_map.yaml")
 
 
+# Create agent
 if "agent" not in st.session_state:
     st.session_state.agent = OpenAIRagAgent(os.environ["OPENAI_MODEL_NAME"],
                                             os.environ["OPENAI_API_KEY"],
-                                            SYS_MSG,
-                                            QUESTION_TEMPLATE)
+                                            SYS_MSG)
+
+# Load question templates
+if "templates" not in st.session_state:
+    with open("./books/book_map.yaml", "r") as fh:
+        conf = yaml.safe_load(fh)
+    st.session_state["templates"] = {}
+    for name in conf.keys():
+        st.session_state["templates"][name] = conf[name]["question_template"]
+
 
 with st.sidebar:
     st.markdown("# Configuration")
@@ -80,7 +87,9 @@ if user_input := st.chat_input("Ask if you must..."):
         placeholder = st.empty()
         full_res = ""
         # Stream output, based on ChatGPT
-        completion = st.session_state.agent(user_input, context)
+        # Build prompt based on current question template
+        quest_msg = st.session_state["templates"][ruleset_name].format(question=user_input, context=context)
+        completion = st.session_state.agent(quest_msg)
         for chunk in completion:
             full_res += (chunk.choices[0].delta.content or "")
             placeholder.markdown(full_res + "▌")

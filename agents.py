@@ -1,35 +1,14 @@
 import openai
 from openai import Stream
 from openai.types.chat.chat_completion_chunk import ChatCompletionChunk
-from abc import ABC, abstractmethod
 
 
-class RagAgent(ABC):
-    """
-    Base LLM Agent Abstract Class
-    """
-
-    @abstractmethod
-    def __call__(self, question: str, context: list[str]) -> str:
-        """
-        Calls the agent
-
-        Args:
-            question: The user's request
-            context: The context for the response
-
-        Returns:
-            response: The agent response
-        """
-        pass
-
-
-class OpenAIRagAgent(RagAgent):
+class OpenAIRagAgent:
     def __init__(self,
                  model_name: str,
                  api_key: str,
                  sys_msg: str,
-                 question_template: str):
+                 ):
         """
         OpenAI RAG Agent, full context is provided for the call to the
         agent but is not stored to the history (to save tokens).
@@ -38,15 +17,12 @@ class OpenAIRagAgent(RagAgent):
             model_name: The model name to use
             api_key: The OpenAI API key
             sys_msg: The system message to use
-            question_template: The template for answering questions, needs to have {question} and {context} tags
-                to be filled at calling
         """
         self.model_name = model_name
         self.client = openai.Client(api_key=api_key)
         self.sys_message = \
             {"role": "system", "content": sys_msg}
         self.history = [self.sys_message]
-        self.question_template = question_template
 
     @staticmethod
     def format_user_message(content: str) -> dict[str, str]:
@@ -56,21 +32,17 @@ class OpenAIRagAgent(RagAgent):
     def format_agent_message(content: str) -> dict[str, str]:
         return {"role": "assistant", "content": content}
 
-    def __call__(self,
-                 question: str,
-                 context: str) -> Stream[ChatCompletionChunk]:
+    def __call__(self, quest_msg: str) -> Stream[ChatCompletionChunk]:
         """
         Call the LLM agent with a specific question and context.
 
         Args:
-            question: The question asked
-            context: The context string
+            quest_msg: The full question prompt, with context and question
 
         Returns:
             response: The agent's response
         """
-        quest_msg = self.format_user_message(self.question_template.format(question=question,
-                                                                           context=context))
+        quest_msg = self.format_user_message(quest_msg)
         return self.client.chat.completions.create(
                 model=self.model_name,
                 messages=self.history + [quest_msg],
