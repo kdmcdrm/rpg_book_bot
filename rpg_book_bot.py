@@ -2,9 +2,8 @@
 RPG Rulebook Bot
 
 ToDo:
- - Improvement: Modify system message and question template based on config
- - Improvement: Get LLM to process question to include any needed context from previous conversation, currently only
-    the immediate question goes to the bot.
+ - Improvement: Agent should store question history, but not context to avoid overflowing the history
+ - Refactor: Agent could wrap up question template, ruleset, etc.
  - Improvement: Model selection
  - Modify to Discord bot
 """
